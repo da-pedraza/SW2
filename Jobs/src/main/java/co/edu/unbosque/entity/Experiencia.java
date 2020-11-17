@@ -26,7 +26,11 @@ public class Experiencia {
 	private Usuario usuario;
 	private String empresa;
 	private String cargo;
-	private int ciudad;
+	
+	
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "id_ciudad")
+	private Ciudad ciudad;
 	private Date fInicio;
 	private Date fFin;
 	private String funciones;
@@ -35,7 +39,7 @@ public class Experiencia {
 
 	}
 
-	public Experiencia(Usuario usuario, String empresa, String cargo, int ciudad, Date fInicio, Date fFin,
+	public Experiencia(Usuario usuario, String empresa, String cargo, Ciudad ciudad, Date fInicio, Date fFin,
 			String funciones) {
 		this.usuario = usuario;
 		this.empresa = empresa;
@@ -78,11 +82,11 @@ public class Experiencia {
 		this.cargo = cargo;
 	}
 
-	public int getCiudad() {
+	public Ciudad getCiudad() {
 		return ciudad;
 	}
 
-	public void setCiudad(int ciudad) {
+	public void setCiudad(Ciudad ciudad) {
 		this.ciudad = ciudad;
 	}
 

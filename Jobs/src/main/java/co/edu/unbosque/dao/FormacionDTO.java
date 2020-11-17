@@ -1,63 +1,25 @@
-package co.edu.unbosque.entity;
+package co.edu.unbosque.dao;
 
 import java.util.Date;
 
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
+public class FormacionDTO {
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-
-@Entity
-@JsonIgnoreProperties({ "hibernateLazyInitializer", "handler" })
-public class Formacion {
-
-	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private int id;
-
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "id_usuario")
-	@JsonIgnoreProperties("formacion")
-	private Usuario usuario;
 	private String institucion;
 	private String nivelFormacion;
 	private String estadoFormacion;
 	private Date f_inicio;
 	private Date f_fin;
 
-	public Formacion() {
+	public FormacionDTO() {
+
 	}
 
-	public Formacion(int id, Usuario usuario, String institucion, String nivelFormacion, String estadoFormacion,
-			Date f_inicio, Date f_fin) {
-		this.id = id;
-		this.usuario = usuario;
+	public FormacionDTO(String institucion, String nivelFormacion, String estadoFormacion, Date f_inicio, Date f_fin) {
 		this.institucion = institucion;
 		this.nivelFormacion = nivelFormacion;
 		this.estadoFormacion = estadoFormacion;
 		this.f_inicio = f_inicio;
 		this.f_fin = f_fin;
-	}
-
-	public int getId() {
-		return id;
-	}
-
-	public void setId(int id) {
-		this.id = id;
-	}
-
-	public Usuario getUsuario() {
-		return usuario;
-	}
-
-	public void setUsuario(Usuario usuario) {
-		this.usuario = usuario;
 	}
 
 	public String getInstitucion() {

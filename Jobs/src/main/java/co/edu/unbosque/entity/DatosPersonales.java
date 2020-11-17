@@ -1,15 +1,14 @@
 package co.edu.unbosque.entity;
 
 import java.sql.Date;
-import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
-import javax.persistence.Transient;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
@@ -25,25 +24,39 @@ public class DatosPersonales {
 	@JoinColumn(name = "id_usuario", updatable = false, nullable = false)
 	@JsonIgnoreProperties("datos_personales")
 	private Usuario usuario;
-	private int t_Documento;
+	//private int t_Documento;
+	
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "tipo_documento")
+	private TipoDocumento tipoDocumento;
 	private int numDocumento;
 	private String p_Nombre;
 	private String s_Nombre;
 	private String p_Apellido;
 	private String s_Apellido;
 	private Date f_Nacimiento;
-	private int genero;
-	private int estadoCivil;
-	private int ciudadResidencia;
+	
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "genero")
+	private Genero genero;
+
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "estado_civil")
+	private EstadoCivil estadoCivil;
+
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "id_ciudad")
+	private Ciudad ciudadResidencia;
 	private String telefono;
 
 	public DatosPersonales() {
 
 	}
 
-	public DatosPersonales(int t_Documento, int numDocumento, String p_Nombre, String s_Nombre, String p_Apellido,
-			String s_Apellido, Date f_Nacimiento, int genero, int estadoCivil, int ciudadResidencia, String telefono) {
-		this.t_Documento = t_Documento;
+	public DatosPersonales(TipoDocumento tipoDocumento, int numDocumento, String p_Nombre, String s_Nombre, String p_Apellido,
+			String s_Apellido, Date f_Nacimiento, Genero genero, EstadoCivil estadoCivil, Ciudad ciudadResidencia,
+			String telefono) {
+		this.tipoDocumento = tipoDocumento;
 		this.numDocumento = numDocumento;
 		this.p_Nombre = p_Nombre;
 		this.s_Nombre = s_Nombre;
@@ -72,19 +85,19 @@ public class DatosPersonales {
 		this.usuario = usuario;
 	}
 
-	public int getT_Documento() {
-		return t_Documento;
+	public TipoDocumento getTipoDocumento() {
+		return tipoDocumento;
 	}
 
-	public void setT_Documento(int t_Documento) {
-		this.t_Documento = t_Documento;
+	public void setTipoDocumento(TipoDocumento tipoDocumento) {
+		this.tipoDocumento = tipoDocumento;
 	}
 
-	public int getNum_Documento() {
+	public int getNumDocumento() {
 		return numDocumento;
 	}
 
-	public void setNum_Documento(int numDocumento) {
+	public void setNumDocumento(int numDocumento) {
 		this.numDocumento = numDocumento;
 	}
 
@@ -128,27 +141,27 @@ public class DatosPersonales {
 		this.f_Nacimiento = f_Nacimiento;
 	}
 
-	public int getGenero() {
+	public Genero getGenero() {
 		return genero;
 	}
 
-	public void setGenero(int genero) {
+	public void setGenero(Genero genero) {
 		this.genero = genero;
 	}
 
-	public int getEstadoCivil() {
+	public EstadoCivil getEstadoCivil() {
 		return estadoCivil;
 	}
 
-	public void setEstadoCivil(int estadoCivil) {
+	public void setEstadoCivil(EstadoCivil estadoCivil) {
 		this.estadoCivil = estadoCivil;
 	}
 
-	public int getCiudadResidencia() {
+	public Ciudad getCiudadResidencia() {
 		return ciudadResidencia;
 	}
 
-	public void setCiudadResidencia(int ciudadResidencia) {
+	public void setCiudadResidencia(Ciudad ciudadResidencia) {
 		this.ciudadResidencia = ciudadResidencia;
 	}
 

@@ -8,8 +8,11 @@ import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
+import javax.persistence.JoinColumn;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
@@ -31,9 +34,12 @@ public class Usuario {
 	@JsonIgnoreProperties("usuario")
 	private List<Experiencia> experiencia;
 
-	// private List<Formacion> formacion;
+	@OneToMany(fetch = FetchType.LAZY, mappedBy = "usuario", cascade = CascadeType.ALL)
+	@JsonIgnoreProperties("usuario")
+	private List<Formacion> formacion;
 
-	// private List<Idiomas> idiomas;
+	//private List<Idioma> idioma;
+	
 
 	// private List<Postulaciones> postulaciones;
 
@@ -85,6 +91,14 @@ public class Usuario {
 
 	public void setExperiencia(List<Experiencia> experiencia) {
 		this.experiencia = experiencia;
+	}
+
+	public List<Formacion> getFormacion() {
+		return formacion;
+	}
+
+	public void setFormacion(List<Formacion> formacion) {
+		this.formacion = formacion;
 	}
 
 }

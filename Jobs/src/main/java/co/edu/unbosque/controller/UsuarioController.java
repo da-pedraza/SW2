@@ -20,7 +20,11 @@ import org.springframework.web.bind.annotation.RestController;
 import co.edu.unbosque.dao.DatosPersonalesDTO;
 import co.edu.unbosque.dao.Mensaje;
 import co.edu.unbosque.dao.UsuarioDTO;
+import co.edu.unbosque.entity.Ciudad;
 import co.edu.unbosque.entity.DatosPersonales;
+import co.edu.unbosque.entity.EstadoCivil;
+import co.edu.unbosque.entity.Genero;
+import co.edu.unbosque.entity.TipoDocumento;
 import co.edu.unbosque.entity.Usuario;
 import co.edu.unbosque.service.DatosPersonalesService;
 import co.edu.unbosque.service.UsuarioService;
@@ -32,10 +36,9 @@ public class UsuarioController {
 
 	@Autowired
 	UsuarioService usuarioService;
-	
+
 	@Autowired
 	DatosPersonalesService datosPersonalesService;
-	
 
 	@GetMapping("/lista")
 	public ResponseEntity<List<Usuario>> list() {
@@ -68,43 +71,50 @@ public class UsuarioController {
 		if (usuarioService.existsByEmail(usuarioDTO.getEmail())) {
 			return new ResponseEntity(new Mensaje("El email ya se encuentra registrado"), HttpStatus.BAD_REQUEST);
 		}
-		
+
 		if (datosPersonalesService.existsByNumDocumento(usuarioDTO.getNum_Documento())) {
 			return new ResponseEntity(new Mensaje("El id ya se encuentra registrado"), HttpStatus.BAD_REQUEST);
 		}
-		
-		 DatosPersonales dp = new DatosPersonales(usuarioDTO.getT_Documento(), usuarioDTO.getNum_Documento(), usuarioDTO.getP_Nombre(), 
-				 usuarioDTO.getS_Nombre(), usuarioDTO.getP_Apellido(), usuarioDTO.getS_Apellido(), usuarioDTO.getF_Nacimiento(), 
-				 usuarioDTO.getGenero(), usuarioDTO.getEstadoCivil(), usuarioDTO.getCiudadResidencia(), usuarioDTO.getTelefono());
+
+		TipoDocumento td = new TipoDocumento();
+		td.setId(usuarioDTO.getT_Documento());
+		Ciudad ciudad = new Ciudad();
+		ciudad.setId(usuarioDTO.getCiudadResidencia());
+		EstadoCivil ec = new EstadoCivil();
+		ec.setId(usuarioDTO.getEstadoCivil());
+		Genero genero = new Genero();
+		genero.setId(usuarioDTO.getGenero());
+		DatosPersonales dp = new DatosPersonales(td, usuarioDTO.getNum_Documento(),
+				usuarioDTO.getP_Nombre(), usuarioDTO.getS_Nombre(), usuarioDTO.getP_Apellido(),
+				usuarioDTO.getS_Apellido(), usuarioDTO.getF_Nacimiento(), genero,
+				ec, ciudad, usuarioDTO.getTelefono());
 		Usuario usuario = new Usuario(usuarioDTO.getEmail(), dp);
 		dp.setUsuario(usuario);
 		usuarioService.save(usuario);
 		return new ResponseEntity(new Mensaje("Usuario creado exitosamente"), HttpStatus.OK);
 	}
-	
-	
+
 	@PutMapping("/update/{email}")
 	public ResponseEntity<?> update(@PathVariable("email") String email, @RequestBody UsuarioDTO usuarioDTO) {
-	
-		if (!usuarioService.existsByEmail(email) ) {
+
+		if (!usuarioService.existsByEmail(email)) {
 			return new ResponseEntity(new Mensaje("El email no se encuentra registrado"), HttpStatus.BAD_REQUEST);
 		}
-		
-		if(usuarioService.existsByEmail(usuarioDTO.getEmail())) {
+
+		if (usuarioService.existsByEmail(usuarioDTO.getEmail())) {
 			return new ResponseEntity(new Mensaje("El email ya se encuentra registrado"), HttpStatus.BAD_REQUEST);
 		}
-	
+
 		Usuario usuario = usuarioService.getByEmail(email).get();
 		usuario.setEmail(usuarioDTO.getEmail());
 		usuarioService.save(usuario);
 		return new ResponseEntity(new Mensaje("Usuario actualizado exitosamente"), HttpStatus.OK);
 	}
-	
-	
+
 	@DeleteMapping("/delete/{email}")
-	public ResponseEntity<?> delete(@PathVariable("email") String email){
-		if(!usuarioService.existsByEmail(email)) {
-			return new ResponseEntity(new Mensaje("El usuario no se encuentra registrado"), HttpStatus.BAD_REQUEST);			
+	public ResponseEntity<?> delete(@PathVariable("email") String email) {
+		if (!usuarioService.existsByEmail(email)) {
+			return new ResponseEntity(new Mensaje("El usuario no se encuentra registrado"), HttpStatus.BAD_REQUEST);
 		}
 		usuarioService.delete(usuarioService.getByEmail(email).get().getId());
 		return new ResponseEntity(new Mensaje("Usuario eliminado"), HttpStatus.OK);
