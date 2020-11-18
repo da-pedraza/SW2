@@ -1,12 +1,15 @@
 package co.edu.unbosque.controller;
 
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.RequestEntity;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -24,9 +27,12 @@ import co.edu.unbosque.entity.Ciudad;
 import co.edu.unbosque.entity.DatosPersonales;
 import co.edu.unbosque.entity.EstadoCivil;
 import co.edu.unbosque.entity.Genero;
+import co.edu.unbosque.entity.Rol;
 import co.edu.unbosque.entity.TipoDocumento;
 import co.edu.unbosque.entity.Usuario;
+import co.edu.unbosque.enums.RolNombre;
 import co.edu.unbosque.service.DatosPersonalesService;
+import co.edu.unbosque.service.RolService;
 import co.edu.unbosque.service.UsuarioService;
 
 @RestController
@@ -39,6 +45,12 @@ public class UsuarioController {
 
 	@Autowired
 	DatosPersonalesService datosPersonalesService;
+	
+	@Autowired
+	RolService RolService;
+	
+	@Autowired
+	PasswordEncoder passwordEncoder;
 
 	@GetMapping("/lista")
 	public ResponseEntity<List<Usuario>> list() {
@@ -66,7 +78,7 @@ public class UsuarioController {
 		}
 	}
 
-	@PostMapping("/create")
+	@PostMapping("/registrar")
 	public ResponseEntity<?> create(@RequestBody UsuarioDTO usuarioDTO) {
 		if (usuarioService.existsByEmail(usuarioDTO.getEmail())) {
 			return new ResponseEntity(new Mensaje("El email ya se encuentra registrado"), HttpStatus.BAD_REQUEST);
@@ -88,7 +100,11 @@ public class UsuarioController {
 				usuarioDTO.getP_Nombre(), usuarioDTO.getS_Nombre(), usuarioDTO.getP_Apellido(),
 				usuarioDTO.getS_Apellido(), usuarioDTO.getF_Nacimiento(), genero,
 				ec, ciudad, usuarioDTO.getTelefono());
-		Usuario usuario = new Usuario(usuarioDTO.getEmail(), dp);
+		Usuario usuario = new Usuario(usuarioDTO.getEmail(), passwordEncoder.encode(usuarioDTO.getPassword()), dp);
+		Rol rolUser = RolService.getByRolNombre(RolNombre.ROLE_USER).get();
+		Set<Rol> roles = new HashSet<>();
+		roles.add(rolUser);
+		usuario.setRol(roles);
 		dp.setUsuario(usuario);
 		usuarioService.save(usuario);
 		return new ResponseEntity(new Mensaje("Usuario creado exitosamente"), HttpStatus.OK);

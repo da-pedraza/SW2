@@ -25,30 +25,33 @@ import co.edu.unbosque.service.UsuarioService;
 @RequestMapping("/dp")
 @CrossOrigin(origins = "*")
 public class DatosPesonalesController {
-	
+
 	@Autowired
 	UsuarioService usuarioService;
-	
+
 	@Autowired
 	DatosPersonalesService datosPersonalesService;
-	
+
 	@PutMapping("/updatedp/{email}")
-	public ResponseEntity<?> update(@PathVariable("email") String email, @RequestBody DatosPersonalesDTO datosPersonalesDTO) {
-	
-		if (!usuarioService.existsByEmail(email) ) {
+	public ResponseEntity<?> update(@PathVariable("email") String email,
+			@RequestBody DatosPersonalesDTO datosPersonalesDTO) {
+
+		if (!usuarioService.existsByEmail(email)) {
 			return new ResponseEntity(new Mensaje("El email no se encuentra registrado"), HttpStatus.BAD_REQUEST);
 		}
-	
-		if(datosPersonalesService.existsByNumDocumento(datosPersonalesDTO.getNum_Documento()) && datosPersonalesService.getByNumDocumento(datosPersonalesDTO.getNum_Documento()).get().getUsuario().getEmail().equals(email) == false){
+
+		if (datosPersonalesService.existsByNumDocumento(datosPersonalesDTO.getNum_Documento())
+				&& datosPersonalesService.getByNumDocumento(datosPersonalesDTO.getNum_Documento()).get().getUsuario()
+						.getEmail().equals(email) == false) {
 			return new ResponseEntity(new Mensaje("El numero de documento ya existe"), HttpStatus.BAD_REQUEST);
 		}
-		
+
 		Usuario usuario = usuarioService.getByEmail(email).get();
 		DatosPersonales dp = usuario.getDatos_personales();
-		Ciudad ciudad = dp.getCiudadResidencia();
-		TipoDocumento td = dp.getTipoDocumento();
-		EstadoCivil ec = dp.getEstadoCivil();
-		Genero g = dp.getGenero();
+		Ciudad ciudad = new Ciudad();
+		TipoDocumento td = new TipoDocumento();
+		EstadoCivil ec = new EstadoCivil();
+		Genero g = new Genero();
 		dp.setP_Nombre(datosPersonalesDTO.getP_Apellido());
 		dp.setS_Nombre(datosPersonalesDTO.getS_Nombre());
 		dp.setP_Apellido(datosPersonalesDTO.getP_Nombre());
@@ -59,17 +62,16 @@ public class DatosPesonalesController {
 		dp.setTelefono(datosPersonalesDTO.getTelefono());
 		ec.setId(datosPersonalesDTO.getEstadoCivil());
 		dp.setEstadoCivil(ec);
-		//dp.setEstadoCivil(datosPersonalesDTO.getEstadoCivil());
+		// dp.setEstadoCivil(datosPersonalesDTO.getEstadoCivil());
 		dp.setF_Nacimiento(datosPersonalesDTO.getF_Nacimiento());
 		g.setId(datosPersonalesDTO.getGenero());
 		dp.setGenero(g);
 		ciudad.setId(datosPersonalesDTO.getCiudadResidencia());
 		dp.setCiudadResidencia(ciudad);
-		dp.setUsuario(usuario);
-		datosPersonalesService.save(dp);
+		usuario.setDatos_personales(dp);
+		// datosPersonalesService.save(dp);
+		usuarioService.save(usuario);
 		return new ResponseEntity(new Mensaje("Usuario actualizado exitosamente"), HttpStatus.OK);
 	}
-	
-	
 
 }

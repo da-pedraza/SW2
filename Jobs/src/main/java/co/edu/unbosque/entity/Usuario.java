@@ -1,6 +1,8 @@
 package co.edu.unbosque.entity;
 
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
@@ -26,6 +28,10 @@ public class Usuario {
 	private String email;
 	private String password;
 
+	@ManyToMany(fetch = FetchType.EAGER)
+	@JoinTable(name = "usuario_rol", joinColumns = @JoinColumn(name = "usuario_id"), inverseJoinColumns = @JoinColumn(name = "rol_id"))
+	private Set<Rol> rol = new HashSet<>();
+
 	@OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL, mappedBy = "usuario")
 	@JsonIgnoreProperties("usuario")
 	private DatosPersonales datos_personales;
@@ -38,8 +44,7 @@ public class Usuario {
 	@JsonIgnoreProperties("usuario")
 	private List<Formacion> formacion;
 
-	//private List<Idioma> idioma;
-	
+	// private List<Idioma> idioma;
 
 	// private List<Postulaciones> postulaciones;
 
@@ -47,9 +52,9 @@ public class Usuario {
 
 	}
 
-	public Usuario(String email, DatosPersonales datos_personales) {
-		super();
+	public Usuario(String email, String password, DatosPersonales datos_personales) {
 		this.email = email;
+		this.password = password;
 		this.datos_personales = datos_personales;
 	}
 
@@ -99,6 +104,14 @@ public class Usuario {
 
 	public void setFormacion(List<Formacion> formacion) {
 		this.formacion = formacion;
+	}
+
+	public Set<Rol> getRol() {
+		return rol;
+	}
+
+	public void setRol(Set<Rol> rol) {
+		this.rol = rol;
 	}
 
 }

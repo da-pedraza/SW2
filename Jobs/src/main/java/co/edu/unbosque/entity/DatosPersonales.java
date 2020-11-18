@@ -1,6 +1,8 @@
 package co.edu.unbosque.entity;
 
 import java.sql.Date;
+
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
@@ -21,7 +23,7 @@ public class DatosPersonales {
 	private int id;
 
 	@OneToOne
-	@JoinColumn(name = "id_usuario", updatable = false, nullable = false)
+	@JoinColumn(name = "id_usuario", updatable = true, nullable = false)
 	@JsonIgnoreProperties("datos_personales")
 	private Usuario usuario;
 	//private int t_Documento;
